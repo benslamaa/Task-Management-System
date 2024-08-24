@@ -1,5 +1,7 @@
 package com.benslamaa.taskmaster.services.auth;
 
+import com.benslamaa.taskmaster.dto.SignUpRequest;
+import com.benslamaa.taskmaster.dto.UserDto;
 import com.benslamaa.taskmaster.entities.User;
 import com.benslamaa.taskmaster.enums.UserRole;
 import com.benslamaa.taskmaster.repositories.UserRepository;
@@ -31,5 +33,21 @@ public class AuthServiceImpl implements AuthService{
         else {
             System.out.println("Admin account already exists");
         }
+    }
+
+    @Override
+    public UserDto signUpUser(SignUpRequest signUpRequest) {
+        User user = new User();
+        user.setEmail(signUpRequest.getEmail());
+        user.setName(signUpRequest.getName());
+        user.setPassword(new BCryptPasswordEncoder().encode(signUpRequest.getPassword()));
+        user.setUserRole(UserRole.EMPLOYEE);
+        User createdUser = userRepository.save(user);
+        return createdUser.getUserDto();
+    }
+
+    @Override
+    public boolean hasUserWithEmail(String email) {
+        return userRepository.findFirstByEmail(email).isPresent();
     }
 }

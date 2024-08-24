@@ -1,6 +1,7 @@
 package com.benslamaa.taskmaster.entities;
 
 
+import com.benslamaa.taskmaster.dto.UserDto;
 import com.benslamaa.taskmaster.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -65,5 +66,15 @@ public class User implements UserDetails {
     public boolean isEnabled() {
 
         return true;
+    }
+
+    public UserDto getUserDto() {
+        UserDto userDto = new UserDto();
+        userDto.setId(id);
+        userDto.setName(name);
+        userDto.setEmail(email);
+        userDto.setPassword(password);
+        userDto.setUserRole(String.valueOf(userRole));
+        return userDto;
     }
 }
