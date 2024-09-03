@@ -23,6 +23,8 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
+@CrossOrigin("*")
+
 public class AuthController {
 
     private final AuthService authService;
@@ -41,6 +43,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not created");
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
+
     }
 
     @PostMapping("/login")
