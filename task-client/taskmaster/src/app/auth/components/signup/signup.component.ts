@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AuthService} from "../../services/auth/auth.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {Router} from "@angular/router";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-signup',
@@ -12,12 +16,16 @@ export class SignupComponent {
   showPassword = false;
   showConfirmPassword = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+                      private fb: FormBuilder,
+                      private authService: AuthService,
+                      private router: Router
+              ) {
     this.signupForm = this.fb.group({
-      name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['', [Validators.required]]
+      name: [null, [Validators.required]],
+      email: [null, [Validators.required, Validators.email]],
+      password: [null, [Validators.required, Validators.minLength(8)]],
+      confirmPassword: [null, [Validators.required]]
     }, { validator: this.passwordMatchValidator });
   }
 
@@ -31,8 +39,39 @@ export class SignupComponent {
   onSubmit() {
     if (this.signupForm.valid) {
       console.log(this.signupForm.value);
-      // Handle form submission
+
     }
+    this.authService.signup(this.signupForm.value).subscribe((res) => {
+      console.log(res);
+      if (res.id != null) {
+        Swal.fire({
+          title: 'Success!',
+          text: 'Sign up successfully',
+          icon: 'success',
+          confirmButtonText: 'OK',
+          timer: 5000
+        }).then(() => {
+          this.router.navigateByUrl('/login');
+        });
+      } else {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to sign up',
+          icon: 'error',
+          confirmButtonText: 'Close',
+          timer: 5000
+        });
+      }
+    }, error => {
+      Swal.fire({
+        title: 'Error!',
+        text: 'An error occurred',
+        icon: 'error',
+        confirmButtonText: 'Close',
+        timer: 5000
+      });
+    });
+
   }
 
   togglePasswordVisibility(field: 'password' | 'confirmPassword') {
@@ -42,6 +81,7 @@ export class SignupComponent {
       this.showConfirmPassword = !this.showConfirmPassword;
     }
   }
+
 
 
 }
